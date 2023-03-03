@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 
@@ -9,6 +10,8 @@ public class SessionManager : MonoBehaviour
     [SerializeField] private ARSessionOrigin _sessionOrigin;
 
     [SerializeField] private GameObject _environmentObject;
+    
+    [SerializeField] private TMP_Text _arButtonText;
         
     public void ResetSession()
     {
@@ -29,4 +32,11 @@ public class SessionManager : MonoBehaviour
             child.gameObject.GetComponent<Renderer>().material.color = new Color(1, 1, 1, value);
         }
     }
+    
+    public void ToggleArAbility()
+    {
+        _session.enabled = !_session.enabled;
+        _arButtonText.text = _session.enabled ? "Disable AR" : "Enable AR";
+    }
 }
+

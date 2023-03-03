@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.XR.ARFoundation;
 
 public class AppManager : MonoBehaviour
 {
@@ -9,3 +11,4 @@ public class AppManager : MonoBehaviour
         Application.Quit();
     }
 }
+   
