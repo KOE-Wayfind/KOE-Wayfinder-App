@@ -241,7 +241,7 @@ GameObject:
   - component: {fileID: 118812403}
   - component: {fileID: 118812402}
   - component: {fileID: 118812401}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Intersection1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -378,7 +378,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -1002,6 +1002,7 @@ GameObject:
   - component: {fileID: 632330554}
   - component: {fileID: 632330553}
   - component: {fileID: 632330555}
+  - component: {fileID: 632330556}
   m_Layer: 0
   m_Name: TopDownCam
   m_TagString: Untagged
@@ -1063,7 +1064,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 55
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 2246b87c0ede7ed449a0b20d161fc78a, type: 2}
   m_TargetDisplay: 0
@@ -1093,6 +1094,25 @@ PositionConstraint:
   m_IsLocked: 0
   m_Sources:
   - sourceTransform: {fileID: 1809618158}
+    weight: 1
+--- !u!1818360609 &632330556
+RotationConstraint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 632330551}
+  m_Enabled: 1
+  m_Weight: 1
+  m_RotationAtRest: {x: 90, y: 0, z: 0}
+  m_RotationOffset: {x: 90, y: 0, z: 0}
+  m_AffectRotationX: 0
+  m_AffectRotationY: 0
+  m_AffectRotationZ: 1
+  m_IsContraintActive: 1
+  m_IsLocked: 0
+  m_Sources:
+  - sourceTransform: {fileID: 199129822}
     weight: 1
 --- !u!1 &633367801
 GameObject:
@@ -2213,7 +2233,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   indicatorSphere: {fileID: 1809618157}
-  arCamera: {fileID: 517509490}
+  arCamera: {fileID: 199129816}
 --- !u!1 &1233107638
 GameObject:
   m_ObjectHideFlags: 0
@@ -2611,7 +2631,7 @@ GameObject:
   - component: {fileID: 1783153752}
   - component: {fileID: 1783153751}
   - component: {fileID: 1783153750}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Intersection2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2745,7 +2765,7 @@ GameObject:
   - component: {fileID: 1804872064}
   - component: {fileID: 1804872063}
   - component: {fileID: 1804872062}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Intersection3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3236,7 +3256,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1858834963}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: IntersectionBoxes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
