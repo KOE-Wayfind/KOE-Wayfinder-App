@@ -19,4 +19,3 @@ public class AppManager : MonoBehaviour
         Application.Quit();
     }
 }
-   
