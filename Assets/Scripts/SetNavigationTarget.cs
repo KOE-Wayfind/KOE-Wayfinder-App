@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -14,14 +12,16 @@ public class SetNavigationTarget : MonoBehaviour
     [SerializeField] private TMP_Text buttonText;
     [SerializeField] private GameObject intersectionBoxes;
 
+    [SerializeField] private TMP_Text lineHeightValue;
 
     private NavMeshPath _path; // current calculated path
     private LineRenderer _line; // line renderer for path
     private Vector3 _targetPosition = Vector3.zero; // current target position
-
-
+    
     private bool _lineToggle;
     private bool _isPathCalculated;
+    
+    float lineYPos = -.5f; // adjust this value to change the amount to lower the line
 
     // Start is called before the first frame update
     void Start()
@@ -44,9 +44,11 @@ public class SetNavigationTarget : MonoBehaviour
                 // clear rendered path
                 _line.positionCount = 0;
             }
+            RenderNavigationPath();
+
+            lineHeightValue.text = lineYPos.ToString();
 
             // TODO: Make line renderer connect to nearest intersection point
-            RenderNavigationPath();
         }
     }
 
@@ -136,21 +138,49 @@ public class SetNavigationTarget : MonoBehaviour
 
         pathPoints.Add(_targetPosition);
 
-        // offset the line so that it lower than the player eye level
-        const float yOffset = 1f; // adjust this value to change the amount to lower the line
-
         for (int i = 0; i < pathPoints.Count; i++)
         {
             Vector3 point = pathPoints[i];
-            point.y -= yOffset;
+            point.y = lineYPos;
             pathPoints[i] = point;
         }
 
-
+        for (int i = 1; i < pathPoints.Count; i++)
+        {
+            if (i == pathPoints.Count - 1) break;
+            var dir =DirectionCommand(pathPoints[i-1], pathPoints[i], pathPoints[i+1]);
+            Debug.Log(dir);
+        }
+    
         // set path starting with player position and ending with destination position
         // in between, add intersection cube that are hit
         _line.positionCount = pathPoints.Count;
         _line.SetPositions(pathPoints.ToArray());
+    }
+
+    private String DirectionCommand(Vector3 previousPosition, Vector3 currentPosition, Vector3 nextPosition)
+    {
+        // Vector3 previousPosition = new Vector3(0f, -1f, 0f);
+        // Vector3 currentPosition = new Vector3(0.25f, -0.59f, 20.41f);
+        // Vector3 nextPosition = new Vector3(-11.33f, -0.59f, 20.41f);
+
+        Vector3 v1 = currentPosition - previousPosition;
+        Vector3 v2 = nextPosition - currentPosition;
+
+        Vector3 cross = Vector3.Cross(v1, v2);
+
+        if (cross.y > 0)
+        {
+            return "Turn right";
+        }
+        else if (cross.y < 0)
+        {
+            return "Turn left";
+        }
+        else
+        {
+            return "Going straight";
+        }
     }
 
     public void SetCurrentNavigationTarget(int selectedValue)
@@ -175,5 +205,10 @@ public class SetNavigationTarget : MonoBehaviour
         if (_line.enabled) SetCurrentNavigationTarget(0); // hardcoded the enginius office
 
         buttonText.text = _lineToggle ? "Hide Path" : "Show Path";
+    }
+
+    public void AdjustLineHeight(float value)
+    {
+        lineYPos = value;
     }
 }
