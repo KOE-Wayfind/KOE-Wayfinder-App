@@ -118,11 +118,13 @@ public class SetNavigationTarget : MonoBehaviour
         pathPoints.Add(playerPosition);
 
         List<Vector3> intersectionCubePositions = new List<Vector3>();
+        List<GameObject> intersectionCubes = new List<GameObject>();
         for (int i = 0; i < intersectionBoxes.transform.childCount; i++)
         {
             // add only cube that have isHit set to true
             if (intersectionBoxes.transform.GetChild(i).GetComponent<IntersectionBox>().isHit)
             {
+                intersectionCubes.Add(intersectionBoxes.transform.GetChild(i).gameObject);
                 intersectionCubePositions.Add(intersectionBoxes.transform.GetChild(i).position);
             }
         }
@@ -149,6 +151,7 @@ public class SetNavigationTarget : MonoBehaviour
         {
             if (i == pathPoints.Count - 1) break;
             var dir =DirectionCommand(pathPoints[i-1], pathPoints[i], pathPoints[i+1]);
+            intersectionCubes[i-1].GetComponent<IntersectionBox>().directionCommand = dir;
             Debug.Log(dir);
         }
     
