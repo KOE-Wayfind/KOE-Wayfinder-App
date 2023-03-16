@@ -34,6 +34,7 @@ public class PlayerNavigation : MonoBehaviour
     {
         if (other.CompareTag("Intersection"))
         {
+            other.gameObject.GetComponent<Renderer>().material.color = Color.yellow;
             var directionCommand = other.gameObject.GetComponent<IntersectionBox>().directionCommand;
             directionCommandText.text = directionCommand;
         }
@@ -43,8 +44,11 @@ public class PlayerNavigation : MonoBehaviour
     {
         if (other.CompareTag("Intersection"))
         {
-            var directionCommand = other.gameObject.GetComponent<IntersectionBox>().directionCommand;
+            // var directionCommand = other.gameObject.GetComponent<IntersectionBox>().directionCommand;
             directionCommandText.text = "Continue straight";
+            
+            // mark intersection as passed, so the line can be detached
+            other.gameObject.GetComponent<IntersectionBox>().isPassed = true;
         }
     }
 }
