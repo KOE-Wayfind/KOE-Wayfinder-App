@@ -14,6 +14,12 @@ public class SessionManager : MonoBehaviour
 
     [SerializeField] private TMP_Text _arButtonText;
 
+    private void Start()
+    {
+        var destination = SceneManager.destinationTarget;
+        Debug.Log("We'll go to " + destination);
+    }
+
     public void ResetSession()
     {
         _session.Reset();

@@ -201,12 +201,13 @@ public class SetNavigationTarget : MonoBehaviour
         return "Going straight";
     }
 
-    public void SetCurrentNavigationTarget(int selectedValue)
+    private void SetCurrentNavigationTarget(int selectedValue)
     {
+        // get target name from SceneManager and do its thing
+        var selectedText = SceneManager.destinationTarget;
         _targetPosition = Vector3.zero;
-        // string selectedText = navigationTargetDropdown.options[selectedValue].text;
-        // Target currentTarget = navigationTargetObjects.Find(x => x.name == selectedText);
-        Target currentTarget = navigationTargetObjects[selectedValue];
+        Target currentTarget = navigationTargetObjects.Find(x => x.name == selectedText);
+        // Target currentTarget = navigationTargetObjects[0]; // for debugging
 
         if (currentTarget != null)
         {
