@@ -3,16 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.XR.ARFoundation;
 
 public class SessionManager : MonoBehaviour
 {
-    [SerializeField] private ARSession _session;
-    [SerializeField] private ARSessionOrigin _sessionOrigin;
+    [SerializeField] private ARSession session;
+    [SerializeField] private ARSessionOrigin sessionOrigin;
 
-    [SerializeField] private GameObject _environmentObject;
+    [SerializeField] private GameObject environmentObject;
 
-    [SerializeField] private TMP_Text _arButtonText;
+    [SerializeField] private TMP_Text arButtonText;
 
     private void Start()
     {
@@ -22,16 +23,16 @@ public class SessionManager : MonoBehaviour
 
     public void ResetSession()
     {
-        _session.Reset();
+        session.Reset();
 
-        _sessionOrigin.transform.position = Vector3.zero;
-        _sessionOrigin.transform.rotation = Quaternion.identity;
+        sessionOrigin.transform.position = Vector3.zero;
+        sessionOrigin.transform.rotation = Quaternion.identity;
     }
 
-    public void adjustOpacity(float value)
+    public void AdjustOpacity(float value)
     {
         // adjust the opacity for all gameobjects in the environment
-        foreach (Transform child in _environmentObject.transform)
+        foreach (Transform child in environmentObject.transform)
         {
             Debug.Log("Child name is " + child.name);
             child.gameObject.GetComponent<Renderer>().material.color = new Color(1, 1, 1, value);
@@ -40,7 +41,7 @@ public class SessionManager : MonoBehaviour
 
     public void ToggleArAbility()
     {
-        _session.enabled = !_session.enabled;
-        _arButtonText.text = _session.enabled ? "Disable AR" : "Enable AR";
+        session.enabled = !session.enabled;
+        arButtonText.text = session.enabled ? "Disable AR" : "Enable AR";
     }
 }

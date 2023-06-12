@@ -207,7 +207,7 @@ public class SetNavigationTarget : MonoBehaviour
         var selectedText = SceneManager.destinationTarget;
         _targetPosition = Vector3.zero;
         Target currentTarget = navigationTargetObjects.Find(x => x.name == selectedText);
-        // Target currentTarget = navigationTargetObjects[0]; // for debugging
+        currentTarget ??= navigationTargetObjects[0]; // for debugging
 
         if (currentTarget != null)
         {

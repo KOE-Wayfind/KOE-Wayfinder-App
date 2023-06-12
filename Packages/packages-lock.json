@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.gindemit.rlottie": {
+      "version": "https://github.com/gindemit/unity-rlottie.git?path=/unity/RLottieUnity/Assets/LottiePlugin/#0.2.1",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "6ac24c027808e2f5031355469a1ffb5f0e5ed8bb"
+    },
     "com.unity.collab-proxy": {
       "version": "1.17.7",
       "depth": 0,
