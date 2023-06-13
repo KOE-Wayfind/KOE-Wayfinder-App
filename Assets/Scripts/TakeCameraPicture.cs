@@ -64,9 +64,11 @@ public class TakeCameraPicture : MonoBehaviour
 
     private Texture2D RTImage()
     {
-        Rect rect = new Rect(0, 0, camera.pixelWidth, camera.pixelHeight);
-        RenderTexture renderTexture = new RenderTexture(camera.pixelWidth, camera.pixelHeight, 24);
-        Texture2D screenShot = new Texture2D(camera.pixelWidth, camera.pixelHeight, TextureFormat.RGBA32, false);
+        var halfCameraWidth = camera.pixelWidth / 2;
+        var halfCameraHeight = camera.pixelHeight / 2;
+        Rect rect = new Rect(0, 0, halfCameraWidth, halfCameraHeight);
+        RenderTexture renderTexture = new RenderTexture(halfCameraWidth, halfCameraHeight, 24);
+        Texture2D screenShot = new Texture2D(halfCameraWidth, halfCameraHeight, TextureFormat.RGBA32, false);
 
         camera.targetTexture = renderTexture;
         camera.Render();
