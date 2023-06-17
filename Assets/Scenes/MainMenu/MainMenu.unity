@@ -1030,7 +1030,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2031666023}
   m_HandleRect: {fileID: 2031666022}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1549,8 +1549,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startButton: {fileID: 485173693}
   navigationTargets:
+  - Conference Room A
   - Enginius Office
-  - ODDAIL
+  - ODDAI
+  - OSCENT
+  - Stairs
+  - Toilet
   listItem: {fileID: 4573958441025045212, guid: c06d248eb7215a24d8f38ccab9a0dc96, type: 3}
   scrollViewContent: {fileID: 293410625}
 --- !u!4 &1781971314

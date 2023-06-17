@@ -1,8 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class MainMenuManager : MonoBehaviour
@@ -33,12 +31,15 @@ public class MainMenuManager : MonoBehaviour
     
     public void StartButtonClicked()
     {
-        SceneManager.destinationTarget = _currentSelectedLocation;
-        SceneManager.LoadScene("MainARNavigation");
+        MySceneManager.DestinationTarget = _currentSelectedLocation;
+        Debug.Log("destinationTarget is: " + MySceneManager.DestinationTarget);
+
+        MySceneManager.LoadScene("CameraCapture");
     }
 
     public void OnLocationSelected(string location)
     {
+        Debug.Log($"On Location Seeettced {location}");
         startButton.GetComponent<Button>().interactable = true;
         _currentSelectedLocation = location;
     }

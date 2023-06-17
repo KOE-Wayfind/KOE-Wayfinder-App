@@ -10,26 +10,25 @@ using UnityEngine.UI;
 
 public class TakeCameraPicture : MonoBehaviour
 {
-    [SerializeField] private Camera camera;
+    [SerializeField] private Camera myArCamera;
 
     [SerializeField] private TMP_Text resultText;
     [SerializeField] private TMP_Text timeTakenText;
     [SerializeField] private GameObject loadingIndicator;
     [SerializeField] private Button takePictureButton;
+    [SerializeField] private Button startButton;
 
     public void TakePicture()
     {
         var startTime = DateTime.Now;
         loadingIndicator.SetActive(true);
         takePictureButton.interactable = false;
-        Debug.Log("TakePicture() called");
-        // StartCoroutine(TakePictureAndSave());
+        
         byte[] bytes;
         Texture2D tex = RTImage();
         bytes = tex.EncodeToPNG();
 
         string enc = Convert.ToBase64String(bytes);
-        Debug.Log("base64: " + enc);
 
         if (Application.isEditor)
         {
@@ -51,6 +50,11 @@ public class TakeCameraPicture : MonoBehaviour
             // turn UI elements back to Original
             loadingIndicator.SetActive(false);
             takePictureButton.interactable = true;
+            
+            MySceneManager.OriginLocation = s.result;
+            
+            // Turn on start button
+            startButton.interactable = true;
         });
 
         // For debugging purposes, also write to a file in the project folder
@@ -62,21 +66,37 @@ public class TakeCameraPicture : MonoBehaviour
         // Debug.Log("saved output");
     }
 
+    public void GoToArScene()
+    {
+        MySceneManager.LoadScene("MainARNavigation");
+    }
+
+    /// <summary>
+    /// This is used when debugging where I can directly choose where to start from
+    /// </summary>
+    /// <param name="whereFrom">This value must match the GameObject name in MainArNavigation Screen (OriginTargets)</param>
+    public void StartFromWhere(string whereFrom)
+    {
+        Debug.Log($"Force select from {whereFrom}");
+        MySceneManager.OriginLocation  = whereFrom;
+        MySceneManager.LoadScene("MainARNavigation");
+    }
+
     private Texture2D RTImage()
     {
-        var halfCameraWidth = camera.pixelWidth / 2;
-        var halfCameraHeight = camera.pixelHeight / 2;
+        var halfCameraWidth = myArCamera.pixelWidth / 2;
+        var halfCameraHeight = myArCamera.pixelHeight / 2;
         Rect rect = new Rect(0, 0, halfCameraWidth, halfCameraHeight);
         RenderTexture renderTexture = new RenderTexture(halfCameraWidth, halfCameraHeight, 24);
         Texture2D screenShot = new Texture2D(halfCameraWidth, halfCameraHeight, TextureFormat.RGBA32, false);
 
-        camera.targetTexture = renderTexture;
-        camera.Render();
+        myArCamera.targetTexture = renderTexture;
+        myArCamera.Render();
 
         RenderTexture.active = renderTexture;
         screenShot.ReadPixels(rect, 0, 0);
 
-        camera.targetTexture = null;
+        myArCamera.targetTexture = null;
         RenderTexture.active = null;
 
         Destroy(renderTexture);

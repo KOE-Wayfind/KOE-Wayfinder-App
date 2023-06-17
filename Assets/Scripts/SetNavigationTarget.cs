@@ -5,6 +5,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
+/// <summary>
+/// This guy is attached to LinePath GameObject
+/// </summary>
 public class SetNavigationTarget : MonoBehaviour
 {
     // [SerializeField] private TMP_Dropdown navigationTargetDropdown;
@@ -12,9 +15,8 @@ public class SetNavigationTarget : MonoBehaviour
     [SerializeField] private GameObject indicatorSphere;
     [SerializeField] private TMP_Text buttonText;
     [SerializeField] private GameObject intersectionBoxes;
-
-    [SerializeField] private TMP_Text lineHeightValue;
-
+    [SerializeField] private GameObject locationPinPrefab;
+    
     private NavMeshPath _path; // current calculated path
     private LineRenderer _line; // line renderer for path
     private Vector3 _targetPosition = Vector3.zero; // current target position
@@ -46,9 +48,7 @@ public class SetNavigationTarget : MonoBehaviour
                 _line.positionCount = 0;
             }
             RenderNavigationPath();
-
-            lineHeightValue.text = _lineYPos.ToString();
-
+            
             // TODO: Make line renderer connect to nearest intersection point
         }
     }
@@ -161,7 +161,6 @@ public class SetNavigationTarget : MonoBehaviour
             if (i == pathPoints.Count - 1) break;
             var dir =DirectionCommand(pathPoints[i-1], pathPoints[i], pathPoints[i+1]);
             intersectionCubes[i-1].GetComponent<IntersectionBox>().directionCommand = dir;
-            // Debug.Log(dir);
         }
 
         _line.positionCount = pathPoints.Count;
@@ -203,17 +202,30 @@ public class SetNavigationTarget : MonoBehaviour
 
     private void SetCurrentNavigationTarget(int selectedValue)
     {
-        // get target name from SceneManager and do its thing
-        var selectedText = SceneManager.destinationTarget;
+        // get target name from MySceneManager and do its thing
+        var selectedText = MySceneManager.DestinationTarget;
         _targetPosition = Vector3.zero;
-        Target currentTarget = navigationTargetObjects.Find(x => x.name == selectedText);
-        currentTarget ??= navigationTargetObjects[0]; // for debugging
+        Target currentTarget = GetDestinationTarget(selectedText);
+
+        Debug.Log(currentTarget.name);
 
         if (currentTarget != null)
         {
             Debug.Log("Setted to " + currentTarget.name);
             _targetPosition = currentTarget.positionObject.transform.position;
+            SetLocationPinToDestination(currentTarget);
         }
+    }
+    
+    private void SetLocationPinToDestination(Target destinationTarget)
+    {
+        // instantiate prefab at destinationTarget position
+        var locationPin = Instantiate(locationPinPrefab, destinationTarget.positionObject.transform.position, Quaternion.identity);
+    }
+
+    private Target GetDestinationTarget(string name)
+    {
+        return navigationTargetObjects.Find(x => x.name == name) ?? navigationTargetObjects[0];
     }
 
     public void ToggleVisibility()

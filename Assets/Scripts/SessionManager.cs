@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -15,10 +16,30 @@ public class SessionManager : MonoBehaviour
 
     [SerializeField] private TMP_Text arButtonText;
 
+    [SerializeField] private List<GameObject> originTargets;
+
+    private string _originUserLocation;
+    private string _destinationUserLocation;
+
     private void Start()
     {
-        var destination = SceneManager.destinationTarget;
-        Debug.Log("We'll go to " + destination);
+        // default value are assigned for debugging purposes
+        _originUserLocation = MySceneManager.OriginLocation ?? "Conference Room A"; 
+        Debug.Log("We'll start from " + _originUserLocation);
+        _destinationUserLocation = MySceneManager.DestinationTarget ?? "Toilet";
+        Debug.Log("We'll go to " + _destinationUserLocation);
+        
+        MoveArSessionToUserOrigin();
+    }
+
+    private void MoveArSessionToUserOrigin()
+    {
+        GameObject originTarget = null;
+        // Find the gameobject that matches the origin location
+        originTarget = originTargets.FirstOrDefault(target => target.name == _originUserLocation);
+        
+        sessionOrigin.transform.position = originTarget.transform.position;
+        sessionOrigin.transform.rotation = originTarget.transform.rotation;
     }
 
     public void ResetSession()
@@ -27,16 +48,6 @@ public class SessionManager : MonoBehaviour
 
         sessionOrigin.transform.position = Vector3.zero;
         sessionOrigin.transform.rotation = Quaternion.identity;
-    }
-
-    public void AdjustOpacity(float value)
-    {
-        // adjust the opacity for all gameobjects in the environment
-        foreach (Transform child in environmentObject.transform)
-        {
-            Debug.Log("Child name is " + child.name);
-            child.gameObject.GetComponent<Renderer>().material.color = new Color(1, 1, 1, value);
-        }
     }
 
     public void ToggleArAbility()

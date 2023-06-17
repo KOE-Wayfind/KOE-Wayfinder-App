@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Google.MaterialDesign.Icons;
 using TMPro;
 using UnityEngine;
 
@@ -10,15 +11,7 @@ using UnityEngine;
 public class PlayerNavigation : MonoBehaviour
 {
     [SerializeField] private TMP_Text directionCommandText;
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
+    [SerializeField] private GameObject arrowIcon;
 
     private void OnTriggerStay(Collider other)
     {
@@ -27,6 +20,8 @@ public class PlayerNavigation : MonoBehaviour
             // Debug.Log("collider inside OnTriggerStay is: " + other.name);
             var directionCommand = other.gameObject.GetComponent<IntersectionBox>().directionCommand;
             directionCommandText.text = directionCommand;
+            
+            ChangeIcon(directionCommand);
         }
     }
 
@@ -37,6 +32,8 @@ public class PlayerNavigation : MonoBehaviour
             other.gameObject.GetComponent<Renderer>().material.color = Color.yellow;
             var directionCommand = other.gameObject.GetComponent<IntersectionBox>().directionCommand;
             directionCommandText.text = directionCommand;
+            
+            ChangeIcon(directionCommand);
         }
     }
     
@@ -49,6 +46,28 @@ public class PlayerNavigation : MonoBehaviour
             
             // mark intersection as passed, so the line can be detached
             other.gameObject.GetComponent<IntersectionBox>().isPassed = true;
+            
+            ChangeIcon("Continue straight");
+        }
+    }
+
+    private void ChangeIcon(string command)
+    {
+        if (command.Contains("straight"))
+        {
+            arrowIcon.transform.rotation = Quaternion.Euler(0, 0, 0);
+        }
+        else if (command.Contains("left"))
+        {
+            arrowIcon.transform.rotation = Quaternion.Euler(0, 0, 90);
+        }
+        else if (command.Contains("right"))
+        {
+            arrowIcon.transform.rotation = Quaternion.Euler(0, 0, -90);
+        }
+        else if (command.Contains("back"))
+        {
+            arrowIcon.transform.rotation = Quaternion.Euler(0, 0, 180);
         }
     }
 }
