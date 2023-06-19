@@ -11,6 +11,8 @@ TagManager:
   - IntersectionE
   - Indicator
   - DestinationTarget
+  - OriginTarget
+  - BothTarget
   layers:
   - Default
   - TransparentFX

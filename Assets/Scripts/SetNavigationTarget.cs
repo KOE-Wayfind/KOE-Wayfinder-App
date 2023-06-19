@@ -4,6 +4,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// This guy is attached to LinePath GameObject
@@ -11,20 +12,18 @@ using UnityEngine.AI;
 public class SetNavigationTarget : MonoBehaviour
 {
     // [SerializeField] private TMP_Dropdown navigationTargetDropdown;
-    [SerializeField] private List<Target> navigationTargetObjects = new List<Target>();
     [SerializeField] private GameObject indicatorSphere;
-    [SerializeField] private TMP_Text buttonText;
     [SerializeField] private GameObject intersectionBoxes;
-    [SerializeField] private GameObject locationPinPrefab;
-    
+    [SerializeField] private GameObject topPanel;
+
     private NavMeshPath _path; // current calculated path
     private LineRenderer _line; // line renderer for path
     private Vector3 _targetPosition = Vector3.zero; // current target position
-    
+
     private bool _lineToggle;
     private bool _isPathCalculated;
 
-    private float _lineYPos = -.5f; // adjust this value to change the amount to lower the line
+    [SerializeField] private float lineYPos = -.5f; // reduce this value to get lower line
 
     // Start is called before the first frame update
     private void Start()
@@ -47,10 +46,21 @@ public class SetNavigationTarget : MonoBehaviour
                 // clear rendered path
                 _line.positionCount = 0;
             }
+
             RenderNavigationPath();
             
+            HideTopPanelWhenPlayerIsCloseToDestination();
+
             // TODO: Make line renderer connect to nearest intersection point
         }
+    }
+
+    private void HideTopPanelWhenPlayerIsCloseToDestination()
+    {
+        // Take the last element and the first element of the line renderer and calculate it distance
+        // if the distance is less than 1.5f, then the player is at the destination point
+        var distance = Vector3.Distance(_line.GetPosition(0), _line.GetPosition(_line.positionCount - 1));
+        topPanel.SetActive(distance > 10f);
     }
 
     private void NavMeshPathWalkthrough()
@@ -126,7 +136,7 @@ public class SetNavigationTarget : MonoBehaviour
         for (var i = 0; i < intersectionBoxes.transform.childCount; i++)
         {
             var intersectionProp = intersectionBoxes.transform.GetChild(i).GetComponent<IntersectionBox>();
-            
+
             // add only cube that are in the navmesh path and
             // cube that the player has not passed yet
             // TODO: This method have one problem, when the player 'berpatah balik' the line renderer
@@ -136,10 +146,10 @@ public class SetNavigationTarget : MonoBehaviour
                 intersectionCubes.Add(intersectionBoxes.transform.GetChild(i).gameObject);
             }
         }
-        
+
         // rearrange the intersectionCubes list based on the pathOrder
         intersectionCubes = intersectionCubes.OrderBy(x => x.GetComponent<IntersectionBox>().pathOrder).ToList();
-        
+
         // add those points to the pathPoints list
         pathPoints.AddRange(intersectionCubes.Select(t => t.transform.position));
 
@@ -150,17 +160,17 @@ public class SetNavigationTarget : MonoBehaviour
         for (var i = 0; i < pathPoints.Count; i++)
         {
             var point = pathPoints[i];
-            point.y = _lineYPos;
+            point.y = lineYPos;
             pathPoints[i] = point;
         }
 
-        
+
         // Determine the direction command for each intersection cube
         for (var i = 1; i < pathPoints.Count; i++)
         {
             if (i == pathPoints.Count - 1) break;
-            var dir =DirectionCommand(pathPoints[i-1], pathPoints[i], pathPoints[i+1]);
-            intersectionCubes[i-1].GetComponent<IntersectionBox>().directionCommand = dir;
+            var dir = DirectionCommand(pathPoints[i - 1], pathPoints[i], pathPoints[i + 1]);
+            intersectionCubes[i - 1].GetComponent<IntersectionBox>().directionCommand = dir;
         }
 
         _line.positionCount = pathPoints.Count;
@@ -183,7 +193,7 @@ public class SetNavigationTarget : MonoBehaviour
 
         Vector3 v1 = currentPosition - previousPosition;
         Vector3 v2 = nextPosition - currentPosition;
-        
+
         // If the resulting vector points upwards (in the y-axis direction), then the turn is to the right.
         // If it points downwards (in the negative y-axis direction), then the turn is to the left.
         Vector3 cross = Vector3.Cross(v1, v2);
@@ -197,49 +207,31 @@ public class SetNavigationTarget : MonoBehaviour
         {
             return "Turn left";
         }
+
         return "Going straight";
     }
 
-    private void SetCurrentNavigationTarget(int selectedValue)
-    {
-        // get target name from MySceneManager and do its thing
-        var selectedText = MySceneManager.DestinationTarget;
-        _targetPosition = Vector3.zero;
-        Target currentTarget = GetDestinationTarget(selectedText);
-
-        Debug.Log(currentTarget.name);
-
-        if (currentTarget != null)
-        {
-            Debug.Log("Setted to " + currentTarget.name);
-            _targetPosition = currentTarget.positionObject.transform.position;
-            SetLocationPinToDestination(currentTarget);
-        }
-    }
-    
-    private void SetLocationPinToDestination(Target destinationTarget)
-    {
-        // instantiate prefab at destinationTarget position
-        var locationPin = Instantiate(locationPinPrefab, destinationTarget.positionObject.transform.position, Quaternion.identity);
-    }
-
-    private Target GetDestinationTarget(string name)
-    {
-        return navigationTargetObjects.Find(x => x.name == name) ?? navigationTargetObjects[0];
-    }
+ 
 
     public void ToggleVisibility()
     {
         _lineToggle = !_lineToggle;
         _line.enabled = _lineToggle;
 
-        if (_line.enabled) SetCurrentNavigationTarget(0); // hardcoded the enginius office
+        Target currentTarget = NavigationManager.DestinationTarget;
 
-        buttonText.text = _lineToggle ? "Hide Path" : "Show Path";
+        if (_line.enabled)
+        {
+            if (currentTarget != null)
+            {
+                Debug.Log("Setted to " + currentTarget.name);
+                _targetPosition = currentTarget.position;
+            }
+        }
     }
 
     public void AdjustLineHeight(float value)
     {
-        _lineYPos = value;
+        lineYPos = value;
     }
 }

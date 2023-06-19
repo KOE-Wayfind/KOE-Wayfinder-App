@@ -51,7 +51,7 @@ public class TakeCameraPicture : MonoBehaviour
             loadingIndicator.SetActive(false);
             takePictureButton.interactable = true;
             
-            MySceneManager.OriginLocation = s.result;
+            MySceneManager.OriginLocationName = s.result;
             
             // Turn on start button
             startButton.interactable = true;
@@ -78,7 +78,7 @@ public class TakeCameraPicture : MonoBehaviour
     public void StartFromWhere(string whereFrom)
     {
         Debug.Log($"Force select from {whereFrom}");
-        MySceneManager.OriginLocation  = whereFrom;
+        MySceneManager.OriginLocationName  = whereFrom;
         MySceneManager.LoadScene("MainARNavigation");
     }
 

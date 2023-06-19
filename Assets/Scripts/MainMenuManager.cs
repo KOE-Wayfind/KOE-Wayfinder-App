@@ -31,8 +31,8 @@ public class MainMenuManager : MonoBehaviour
     
     public void StartButtonClicked()
     {
-        MySceneManager.DestinationTarget = _currentSelectedLocation;
-        Debug.Log("destinationTarget is: " + MySceneManager.DestinationTarget);
+        MySceneManager.DestinationLocationName = _currentSelectedLocation;
+        Debug.Log("destinationTarget is: " + MySceneManager.DestinationLocationName);
 
         MySceneManager.LoadScene("CameraCapture");
     }

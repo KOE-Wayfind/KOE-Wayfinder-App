@@ -8,5 +8,11 @@ using UnityEngine;
 public class Target
 {
     public string name;
-    public GameObject positionObject;
+    public Vector3 position;
+    
+    public Target(string name, Vector3 position)
+    {
+        this.name = name;
+        this.position = position;
+    }
 }

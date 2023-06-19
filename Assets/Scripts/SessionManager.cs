@@ -1,10 +1,7 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
+using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 
 public class SessionManager : MonoBehaviour
@@ -16,30 +13,70 @@ public class SessionManager : MonoBehaviour
 
     [SerializeField] private TMP_Text arButtonText;
 
-    [SerializeField] private List<GameObject> originTargets;
+    [SerializeField] private List<GameObject> allTargets;
+    [SerializeField] private RawImage imageTopPanel;
 
-    private string _originUserLocation;
-    private string _destinationUserLocation;
+    [SerializeField] private TMP_Text textTopPanel;
+    [SerializeField] private GameObject locationPinPrefab;
+
+    [SerializeField] private GameObject startPanel;
+    [SerializeField] private GameObject navigationCommand;
+
+    private Target _originTarget;
+    private Target _destinationTarget;
 
     private void Start()
     {
         // default value are assigned for debugging purposes
-        _originUserLocation = MySceneManager.OriginLocation ?? "Conference Room A"; 
-        Debug.Log("We'll start from " + _originUserLocation);
-        _destinationUserLocation = MySceneManager.DestinationTarget ?? "Toilet";
-        Debug.Log("We'll go to " + _destinationUserLocation);
-        
+        // set origin destination
+        _originTarget = GetDestinationTarget(MySceneManager.OriginLocationName ?? "Conference Room A");
+        NavigationManager.OriginTarget = _originTarget;
+        Debug.Log("We'll start from " + _originTarget.name + " at " + _originTarget.position);
+
+        // set destination target
+        _destinationTarget = GetDestinationTarget(MySceneManager.DestinationLocationName ?? "OSCENT");
+        NavigationManager.DestinationTarget = _destinationTarget;
+        Debug.Log("We'll go to " + _destinationTarget.name + " at " + _destinationTarget.position);
+
         MoveArSessionToUserOrigin();
+        SetTopPanelInformation();
+        SetLocationPinToDestination();
     }
 
     private void MoveArSessionToUserOrigin()
     {
-        GameObject originTarget = null;
-        // Find the gameobject that matches the origin location
-        originTarget = originTargets.FirstOrDefault(target => target.name == _originUserLocation);
-        
-        sessionOrigin.transform.position = originTarget.transform.position;
-        sessionOrigin.transform.rotation = originTarget.transform.rotation;
+        sessionOrigin.transform.position = _originTarget.position;
+        sessionOrigin.transform.rotation = new Quaternion(0f, 100f, 0f, 1f);
+    }
+
+    private void SetTopPanelInformation()
+    {
+        var imagesDict = new Dictionary<string, string>
+        {
+            { "Conference Room A", "Places/conference-a_18" },
+            { "ODDAI", "Places/oddai_2" },
+            { "Main Entrance", "Places/main-entrance_19" },
+            { "Enginius Office", "Places/enginius-office_23" },
+            { "OSCENT", "Places/oscent_9" },
+            { "Toilet", "Places/toilet-e1" },
+            { "Stairs", "Places/tangga-e1" }
+        };
+        string imagePath;
+
+        try
+        {
+            imagePath = imagesDict[_destinationTarget.name];
+        }
+        catch
+        {
+            imagePath = "Places/default-no-location";
+        }
+
+        // read the image from the resources folder
+        imageTopPanel.texture = Resources.Load<Texture>(imagePath);
+
+        // set the text
+        textTopPanel.text = _destinationTarget.name;
     }
 
     public void ResetSession()
@@ -55,4 +92,27 @@ public class SessionManager : MonoBehaviour
         session.enabled = !session.enabled;
         arButtonText.text = session.enabled ? "Disable AR" : "Enable AR";
     }
+
+    private Target GetDestinationTarget(string name)
+    {
+        // find the relevant gameobject from the allTargets list
+        var targetGameObject = allTargets.Find(x => x.name == name);
+
+        return new Target(targetGameObject.name, targetGameObject.transform.position);
+    }
+    
+    private void SetLocationPinToDestination()
+    {
+        // instantiate prefab at destinationTarget position
+        Instantiate(locationPinPrefab, _destinationTarget.position, Quaternion.identity);
+    }
+
+    /// <summary>
+    /// Hide Start Button & show destination command panel
+    /// </summary>
+    public void StartNavigation()
+    {
+        startPanel.SetActive(false);
+        navigationCommand.SetActive(true);
+    } 
 }
