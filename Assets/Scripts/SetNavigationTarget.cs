@@ -48,20 +48,32 @@ public class SetNavigationTarget : MonoBehaviour
             }
 
             RenderNavigationPath();
-            
-            HideTopPanelWhenPlayerIsCloseToDestination();
+
+            // hide the top panel if player is arriving at destination
+            if (IsCloseToDestination()) topPanel.SetActive(false);
 
             // TODO: Make line renderer connect to nearest intersection point
         }
     }
 
-    private void HideTopPanelWhenPlayerIsCloseToDestination()
+
+    private bool IsCloseToDestination()
     {
-        // Take the last element and the first element of the line renderer and calculate it distance
-        // if the distance is less than 1.5f, then the player is at the destination point
-        var distance = Vector3.Distance(_line.GetPosition(0), _line.GetPosition(_line.positionCount - 1));
-        topPanel.SetActive(distance > 10f);
+        var distance = GetDistanceFromPlayerToDestination();
+        return distance is > 5 and < 10f;
     }
+
+    private bool IsArrived()
+    {
+        var distance = GetDistanceFromPlayerToDestination();
+        return distance < 5;
+    }
+
+    private float GetDistanceFromPlayerToDestination()
+    {
+        return Vector3.Distance(_line.GetPosition(0), _line.GetPosition(_line.positionCount - 1));
+    }
+
 
     private void NavMeshPathWalkthrough()
     {
@@ -187,9 +199,12 @@ public class SetNavigationTarget : MonoBehaviour
     /// <returns>Direction command (eg: "Turn right")</returns>
     private String DirectionCommand(Vector3 previousPosition, Vector3 currentPosition, Vector3 nextPosition)
     {
-        // Vector3 previousPosition = new Vector3(0f, -1f, 0f);
-        // Vector3 currentPosition = new Vector3(0.25f, -0.59f, 20.41f);
-        // Vector3 nextPosition = new Vector3(-11.33f, -0.59f, 20.41f);
+        // if player already close to the target, just replace the command with "You have arrived" or smth
+        // ideally, I would do this as OnTriggerEnter on smth, but I don't have much time heuehuhe
+        if (IsArrived())
+        {
+            return "You have arrived";
+        }
 
         Vector3 v1 = currentPosition - previousPosition;
         Vector3 v2 = nextPosition - currentPosition;
@@ -211,7 +226,6 @@ public class SetNavigationTarget : MonoBehaviour
         return "Going straight";
     }
 
- 
 
     public void ToggleVisibility()
     {

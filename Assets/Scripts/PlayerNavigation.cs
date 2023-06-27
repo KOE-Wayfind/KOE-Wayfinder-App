@@ -53,6 +53,12 @@ public class PlayerNavigation : MonoBehaviour
 
     private void ChangeIcon(string command)
     {
+        if (command.Contains("arrived"))
+        {
+            arrowIcon.SetActive(false);
+            return;
+        }
+        
         if (command.Contains("straight"))
         {
             arrowIcon.transform.rotation = Quaternion.Euler(0, 0, 0);

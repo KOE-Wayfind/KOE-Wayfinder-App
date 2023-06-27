@@ -17,10 +17,13 @@ public class SessionManager : MonoBehaviour
     [SerializeField] private RawImage imageTopPanel;
 
     [SerializeField] private TMP_Text textTopPanel;
+    
     [SerializeField] private GameObject locationPinPrefab;
+    [SerializeField] private int destinationPinOffsetMultiplier = 1; 
 
     [SerializeField] private GameObject startPanel;
     [SerializeField] private GameObject navigationCommand;
+    
 
     private Target _originTarget;
     private Target _destinationTarget;
@@ -104,7 +107,8 @@ public class SessionManager : MonoBehaviour
     private void SetLocationPinToDestination()
     {
         // instantiate prefab at destinationTarget position
-        Instantiate(locationPinPrefab, _destinationTarget.position, Quaternion.identity);
+        var offset = Vector3.down * destinationPinOffsetMultiplier;
+        Instantiate(locationPinPrefab, _destinationTarget.position - offset, Quaternion.identity);
     }
 
     /// <summary>

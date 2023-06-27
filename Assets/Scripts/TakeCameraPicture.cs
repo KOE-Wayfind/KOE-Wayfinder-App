@@ -17,6 +17,9 @@ public class TakeCameraPicture : MonoBehaviour
     [SerializeField] private GameObject loadingIndicator;
     [SerializeField] private Button takePictureButton;
     [SerializeField] private Button startButton;
+    
+    // GameObject named "DebugStartFromButtons"
+    [SerializeField] private GameObject debugButtons;
 
     public void TakePicture()
     {
@@ -102,5 +105,10 @@ public class TakeCameraPicture : MonoBehaviour
         Destroy(renderTexture);
         renderTexture = null;
         return screenShot;
+    }
+
+    public void ToggleDebugStartFromButton()
+    {
+        debugButtons.SetActive(!debugButtons.activeSelf);       
     }
 }
