@@ -3,18 +3,23 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 
+/// <summary>
+/// Send data to server to get the resulting place name
+/// </summary>
 public class IdentifyPlaceFromImage : MonoBehaviour
 {
-    private static string _url = "https://iqfareez-special-bassoon-vrj7v597x5rcw7j6-5000.preview.app.github.dev/image";
-
     public static void Localize(string imageData, Action<LocalizeResult> callback)
     {
+        // obtain server url from setting
+        var serverUrl = LocalizationSettings.ServerUrl;
+
         // Create a JSON object with the desired data
         string json = "{\n\t\"image_data\": \" " + imageData + " \"\n}";
 
         // Create a UnityWebRequest object for the POST request
         // https://answers.unity.com/questions/1163204/prevent-unitywebrequestpost-from-url-encoding-the.html
-        UnityWebRequest request = UnityWebRequest.Post(_url, json);
+        var imageEndpoint = serverUrl + "/image";
+        UnityWebRequest request = UnityWebRequest.Post(imageEndpoint, json);
         request.uploadHandler = new UploadHandlerRaw(Encoding.ASCII.GetBytes(json));
         request.downloadHandler = new DownloadHandlerBuffer();
         request.method = UnityWebRequest.kHttpVerbPOST;
@@ -23,7 +28,6 @@ public class IdentifyPlaceFromImage : MonoBehaviour
         request.SetRequestHeader("Content-Type", "application/json");
 
         // Send the request asynchronously
-
         var operation = request.SendWebRequest();
         operation.completed += delegate(AsyncOperation asyncOperation)
         {
@@ -36,9 +40,7 @@ public class IdentifyPlaceFromImage : MonoBehaviour
 
             Debug.Log("Request completed successfully!");
             string responseText = request.downloadHandler.text;
-            // JObject responseJson = JObject.Parse(responseText);
             Debug.Log("Response: " + responseText);
-            // string placeName = responseText["result"].ToString();
             callback(LocalizeResult.CreateFromJson(responseText));
         };
     }
