@@ -10,6 +10,8 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private GameObject listItem;
     [SerializeField] private GameObject scrollViewContent;
     
+    [SerializeField] private GameObject infoPanel;
+    
     private string _currentSelectedLocation;
 
     // Start is called before the first frame update
@@ -39,8 +41,24 @@ public class MainMenuManager : MonoBehaviour
 
     public void OnLocationSelected(string location)
     {
-        Debug.Log($"On Location Seeettced {location}");
+        Debug.Log($"On Location Selected {location}");
         startButton.GetComponent<Button>().interactable = true;
         _currentSelectedLocation = location;
+    }
+
+    public void OpenInfoPanel()
+    {
+        infoPanel.SetActive(true);
+    }
+
+    public void CloseInfoPanel()
+    {
+        infoPanel.SetActive(false);
+    }
+
+    public void OpenLink(string url)
+    {
+        // open URL
+        Application.OpenURL(url);
     }
 }
