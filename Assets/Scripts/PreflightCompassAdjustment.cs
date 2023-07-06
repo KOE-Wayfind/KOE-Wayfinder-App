@@ -14,6 +14,9 @@ public class PreflightCompassAdjustment : MonoBehaviour
     [SerializeField] private float rotationSpeed = 5f;
     // [SerializeField] private float angleThreshold = 1f;
     
+    // Phone level detection
+    [SerializeField] private GameObject phoneLevelPanel;
+
     private bool _startTracking;
     private bool _startTrackingEditor;
     private float _compassValue;
@@ -58,7 +61,7 @@ public class PreflightCompassAdjustment : MonoBehaviour
         // for editor
         _startTrackingEditor = true;
     }
-    
+
     /// <summary>
     /// Manual offset of the compass input value
     /// </summary>
@@ -97,9 +100,29 @@ public class PreflightCompassAdjustment : MonoBehaviour
             {
                 // only edit the ar pose before the navigation starts
                 sessionOrigin.transform.rotation = Quaternion.Euler(0, smoothedHeading, 0);
+            
+                // check orientation
+                CheckPhoneOrientation();
             }
             compassText.text = (int)smoothedHeading + "° " + DegreesToCardinalDetailed(smoothedHeading);
         }
+    }
+
+    private void CheckPhoneOrientation()
+    {
+        // Get the current acceleration vector from the device
+        Vector3 acceleration = Input.acceleration;
+
+        // Calculate the absolute value of the Z-axis acceleration
+        float zAcceleration = Mathf.Abs(acceleration.z);
+
+        // Define a threshold value to determine if the screen is pointing up
+        float threshold = 0.7f;
+
+        // Check if the Z-axis acceleration is greater than the threshold
+        bool isScreenUp = zAcceleration > threshold;
+
+        phoneLevelPanel.SetActive(!isScreenUp);
     }
     
 
