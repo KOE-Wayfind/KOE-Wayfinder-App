@@ -40,6 +40,47 @@ List of the supported devices by ARCore: https://developers.google.com/ar/device
 
 I'm using [Redmi Note 11](https://www.gsmarena.com/xiaomi_redmi_note_11-11336.php) (Android 12) for development.
 
+## Overall working principle
+
+Sequence diagram below shows the overall working principles of the application.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Unity3D
+    participant FlaskServer
+
+    User->>Unity3D: Launch AR Navigation
+    Unity3D->>Unity3D: Show Main Menu
+
+    User->>Unity3D: Choose Destination
+    Unity3D->>Unity3D: Show Localization Screen
+
+    User->>Unity3D: Point Camera to Area
+    Unity3D->>Unity3D: Take Picture
+    Unity3D-->>FlaskServer: Send Picture for Processing
+    FlaskServer-->>Unity3D: Determine Location from Picture
+
+    User->>Unity3D: Align with Building
+    Unity3D->>Unity3D: Use Compass to Align
+
+    User->>Unity3D: Click Start
+    Unity3D->>Unity3D: Calculate Route
+    Unity3D->>Unity3D: Display Route with Turn-by-Turn Directions
+
+    User->>Unity3D: Start Navigation
+
+    loop Update Position
+        Unity3D->>Unity3D: Track User's Position
+        Unity3D->>Unity3D: Update User's Location on AR Scene
+        Unity3D-->>Unity3D: Update Navigation Instructions
+    end
+
+    User->>Unity3D: Reach Destination
+    Unity3D->>Unity3D: Stop Navigation
+    Unity3D->>Unity3D: Show "Destination Reached" Message
+```
+
 ## Releases
 
 Download the app from [releases](https://github.com/KOE-Wayfind/KOE-Wayfinder-App/releases) page
